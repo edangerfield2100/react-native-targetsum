@@ -4,50 +4,74 @@ import PropTypes from 'prop-types';
 import RandomNumber from './RandomNumber';
 
 const Game = (props) => {
-  const [selectedNumbers, setSelectedNumbers] = useState([]);
+
+  const STATUS_LOST = 'LOST';
+  const STATUS_WON = 'WON';
+  const STATUS_PLAYING = 'PLAYING';
+  const STATUS_MSG_CONGRAT = 'Congratulations, you won!';
+  const STATUS_MSG_LOST = 'You lost, try again!';
+
+  const [selectedIds, setSelectedIds] = useState([]);
   const [randomNumbers, setRandomNumbers] = useState([]);
   const [target, setTarget] = useState(undefined);
   const [resetToggle, setResetToggle] = useState(false);
+  const [gameStatus, setGameStatus] = useState('PLAYING');
 
   useEffect(() => {
+    // set random numbers
     const tempRandomNumbers = Array
       .from({length: props.randomNumberCount})
       .map(() => 1 + Math.floor(10 * Math.random()));
 
     setRandomNumbers([...tempRandomNumbers]);
 
+    // set target number
     const tempTarget = tempRandomNumbers
       .slice(0, props.randomNumberCount - 2)
       .reduce((acc, curr) => acc + curr, 0);
 
     setTarget(tempTarget);
   }, [resetToggle]);
+
+  useEffect(() => {
+    // update the gameStatus upon change of selectedIds
+    let selectedSum = selectedIds.reduce((acc, curr) => acc + randomNumbers[curr], 0);
+
+    if (selectedSum < target) {
+      setGameStatus(STATUS_PLAYING);
+    } else if (selectedSum == target) {
+      setGameStatus(STATUS_WON);
+    } else {
+      setGameStatus(STATUS_LOST);
+    }
+  }, [selectedIds.length]);
+
   // shuffle numbers
 
-  // returns boolean indicating in index of passed in number, is in selectedNumbers array
+  // returns boolean indicating in index of passed in number, is in selectedIds array
   const isNumberSelected = (index) => {
-    return selectedNumbers.indexOf(index) >= 0;
+    return selectedIds.indexOf(index) >= 0;
   };
   
   const selectNumber = (index) => {
-    const indexOfSelectedNumber = selectedNumbers.indexOf(index);
+    const indexOfSelectedNumber = selectedIds.indexOf(index);
     if (indexOfSelectedNumber < 0) {
-      setSelectedNumbers([...selectedNumbers, index]);
+      setSelectedIds([...selectedIds, index]);
     } else {
-      let tempSelectedNumbers = [...selectedNumbers];
-      tempSelectedNumbers.splice(indexOfSelectedNumber, 1);
-      setSelectedNumbers([...tempSelectedNumbers]);
+      let tempselectedIds = [...selectedIds];
+      tempselectedIds.splice(indexOfSelectedNumber, 1);
+      setSelectedIds([...tempselectedIds]);
     }
   };
 
   const refreshGame = () => {
-    setSelectedNumbers([]);
+    setSelectedIds([]);
     setResetToggle(!resetToggle);
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.target}>{target}</Text>
+      <Text style={[styles.target, styles[`game${gameStatus}`]]}>{target}</Text>
       <View style={styles.row}>
         {
           randomNumbers.map((num, index) => {
@@ -56,14 +80,22 @@ const Game = (props) => {
                 key={index}
                 id={index}
                 number={num} 
-                isDisabled={isNumberSelected(index)}
+                isDisabled={isNumberSelected(index) || gameStatus !== STATUS_PLAYING}
                 onPress={selectNumber}
               />
             );
           })
         }
       </View>
-      <Button style={{margin:10}} title="Try again" onPress={refreshGame} />
+      <View style={styles.gameStatusContainer}>
+        <Text style={styles.gameStatusMessage}>{
+          gameStatus === STATUS_WON ? STATUS_MSG_CONGRAT :
+            gameStatus === STATUS_LOST ? STATUS_MSG_LOST : ''        
+        }</Text>
+      </View>
+      <View style={styles.resetContainer}>
+        <Button style={{margin:10}} title="Reset" onPress={refreshGame} />
+      </View>
     </View>
   );
 };
@@ -90,6 +122,28 @@ const styles = StyleSheet.create({
   tryAgain: {
     margin: 10,
     backgroundColor: 'green'
+  },
+  gameStatusContainer: {
+    alignItems: 'center',
+    flex: 1,
+    justifyContent: 'flex-start',
+    margin: 10
+  },
+  gameStatusMessage: {
+    fontSize: 24,
+  },
+  gameWON: {
+    backgroundColor: 'green'
+  },
+  gameLOST: {
+    backgroundColor: 'red'
+  }, 
+  gamePLAYING: {
+    backgroundColor: '#aaa',
+  },
+  resetContainer: {
+    flex: 1,
+    margin: 20
   }
 });
 

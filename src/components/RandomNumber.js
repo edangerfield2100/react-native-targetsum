@@ -9,7 +9,7 @@ const RandomNumber = (props) => {
   };
 
   return ( 
-    <TouchableOpacity onPress={handlePress}>
+    <TouchableOpacity disabled={props.isDisabled} onPress={handlePress}>
       <Text style={[styles.randomNumber, props.isDisabled && styles.disabled]} >{props.number}</Text>
     </TouchableOpacity>
   );
