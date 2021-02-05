@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 const RandomNumber = (props) => {
 
   const handlePress = () => {
-    console.log(props.number);
     props.onPress(props.id);
   };
 

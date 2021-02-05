@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import RandomNumber from './RandomNumber';
 
 const Game = (props) => {
-  
   const [selectedNumbers, setSelectedNumbers] = useState([]);
   const [randomNumbers, setRandomNumbers] = useState([]);
   const [target, setTarget] = useState(undefined);
@@ -23,19 +22,7 @@ const Game = (props) => {
 
     setTarget(tempTarget);
   }, [resetToggle]);
-
-  // const randomNumbers = Array
-  //   .from({length: props.randomNumberCount})
-  //   .map(() => 1 + Math.floor(10 * Math.random()));
- 
-    // console.log(randomNumbers);
-    // console.log('');
-
-  // const target = randomNumbers
-  //   .slice(0, props.randomNumberCount - 2)
-  //   .reduce((acc, curr) => acc + curr, 0);
-
-    // shuffle numbers;
+  // shuffle numbers
 
   // returns boolean indicating in index of passed in number, is in selectedNumbers array
   const isNumberSelected = (index) => {
@@ -43,7 +30,14 @@ const Game = (props) => {
   };
   
   const selectNumber = (index) => {
-    setSelectedNumbers((selectedNumbers) => [...selectedNumbers, index]);
+    const indexOfSelectedNumber = selectedNumbers.indexOf(index);
+    if (indexOfSelectedNumber < 0) {
+      setSelectedNumbers([...selectedNumbers, index]);
+    } else {
+      let tempSelectedNumbers = [...selectedNumbers];
+      tempSelectedNumbers.splice(indexOfSelectedNumber, 1);
+      setSelectedNumbers([...tempSelectedNumbers]);
+    }
   };
 
   const refreshGame = () => {
