@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Button } from 'react-native';
 import PropTypes from 'prop-types';
 import RandomNumber from './RandomNumber';
+import shuffle from 'lodash.shuffle';
 
 const Game = (props) => {
 
@@ -32,6 +33,7 @@ const Game = (props) => {
   //   }
   // }, [gameTimer]);
 
+
   useEffect(() => {
     // set random numbers
     const tempRandomNumbers = Array
@@ -46,6 +48,11 @@ const Game = (props) => {
     setTarget(tempTarget);
 
     setGameStatus(STATUS_PLAYING);
+
+    //shuffle numbers
+    const shuffledNumbers = shuffle(tempRandomNumbers);
+    setRandomNumbers(shuffledNumbers);
+
   }, [resetToggle]);
 
   useEffect(() => {
@@ -60,8 +67,6 @@ const Game = (props) => {
       setGameStatus(STATUS_LOST);
     }
   }, [selectedIds.length]);
-
-  // shuffle numbers
 
   // returns boolean indicating in index of passed in number, is in selectedIds array
   const isNumberSelected = (index) => {
