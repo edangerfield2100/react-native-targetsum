@@ -17,20 +17,35 @@ const Game = (props) => {
   const [resetToggle, setResetToggle] = useState(false);
   const [gameStatus, setGameStatus] = useState('PLAYING');
 
+  // TODO: Add Timer logic via React Hooks and setInterval
+  //const [gameTimer, setGameTimer] = useState(10);
+
+  //let gameTimerId;
+
+  // useEffect(() => {
+  //   gameTimerId = setInterval(setGameTimer(gameTimer - 1), 1000);
+  // }, []);
+
+  // useEffect(() => {
+  //   if (gameTimer === 0) {
+  //     clearInterval(gameTimerId);
+  //   }
+  // }, [gameTimer]);
+
   useEffect(() => {
     // set random numbers
     const tempRandomNumbers = Array
       .from({length: props.randomNumberCount})
       .map(() => 1 + Math.floor(10 * Math.random()));
-
     setRandomNumbers([...tempRandomNumbers]);
 
     // set target number
     const tempTarget = tempRandomNumbers
       .slice(0, props.randomNumberCount - 2)
       .reduce((acc, curr) => acc + curr, 0);
-
     setTarget(tempTarget);
+
+    setGameStatus(STATUS_PLAYING);
   }, [resetToggle]);
 
   useEffect(() => {
